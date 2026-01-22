@@ -37,75 +37,92 @@ Our engineering model is intentionally modular:
 
 ```mermaid
 
-%%{init: {"flowchart":{"nodeSpacing":50,"rankSpacing":60}}}%%
+%%{init: {"flowchart":{"nodeSpacing":55,"rankSpacing":65}}}%%
 flowchart TB
 
   FW[atom-framework stable base]
 
-  subgraph C1["Security privacy rights access"]
-    P1[ahgSecurityClearancePlugin]
-    P2[ahgPrivacyPlugin]
-    P3[ahgRightsPlugin]
-    P4[ahgExtendedRightsPlugin]
-    P5[ahgAccessRequestPlugin]
-    P6[ahgRequestToPublishPlugin]
+  subgraph SDK["Shared SDKs"]
+    JS[atom-client-js]
+    PY[atom-ahg-python]
   end
 
-  subgraph C2["Provenance audit governance"]
-    P7[ahgProvenancePlugin]
-    P8[ahgAuditTrailPlugin]
-    P9[ahgDonorAgreementPlugin]
+  subgraph GOV["Catalog"]
+    CAT[atom-extensions-catalog]
   end
 
-  subgraph C3["Spectrum loans museum sector"]
-    P10[ahgSpectrumPlugin]
-    P11[ahgLoanPlugin]
-    P12[ahgMuseumPlugin]
-    P13[ahgHeritageAccountingPlugin]
+  subgraph UI["UI and Presentation"]
+    THEME[ahgThemeB5Plugin]
+    DISP[ahgDisplayPlugin]
+    GALL[ahgGalleryPlugin]
+    IIIF[ahgIiifCollectionPlugin]
+    M3D[ahg3DModelPlugin]
   end
 
-  subgraph C4["Preservation condition DAM display"]
-    P14[ahgPreservationPlugin]
-    P15[ahgConditionPlugin]
-    P16[ahgDAMPlugin]
-    P17[ahgDisplayPlugin]
-    P18[ahgGalleryPlugin]
-    P19[ahgIiifCollectionPlugin]
-    P20[ahg3DModelPlugin]
-    P21[ahgThemeB5Plugin]
+  subgraph SEC["Security Rights Privacy Access"]
+    CLR[ahgSecurityClearancePlugin]
+    RGT[ahgRightsPlugin]
+    XRGT[ahgExtendedRightsPlugin]
+    PRV[ahgPrivacyPlugin]
+    ARQ[ahgAccessRequestPlugin]
+    PUB[ahgRequestToPublishPlugin]
   end
 
-  subgraph C5["AI extraction search research reporting"]
-    P22[ahgNerPlugin]
-    P23[ahgMetadataExtractionPlugin]
-    P24[ahgSemanticSearchPlugin]
-    P25[ahgResearchPlugin]
-    P26[ahgRicExplorerPlugin]
-    P27[ahgReportBuilderPlugin]
+  subgraph GOV2["Provenance Audit Governance"]
+    PROV[ahgProvenancePlugin]
+    AUD[ahgAuditTrailPlugin]
+    DON[ahgDonorAgreementPlugin]
   end
 
-  subgraph C6["User engagement"]
-    P28[ahgFavoritesPlugin]
-    P29[ahgFeedbackPlugin]
-    P30[ahgCartPlugin]
+  subgraph SECTOR["Sector Workflows"]
+    SPEC[ahgSpectrumPlugin]
+    LOAN[ahgLoanPlugin]
+    MUS[ahgMuseumPlugin]
+    LIB[ahgLibraryPlugin]
+    ACC[ahgHeritageAccountingPlugin]
   end
 
-  subgraph C7["Integration migration operations"]
-    P31[ahgAPIPlugin]
-    P32[ahgLibraryPlugin]
-    P33[ahgMigrationPlugin]
-    P34[ahgDataMigrationPlugin]
-    P35[ahgBackupPlugin]
-    P36[ahgVendorPlugin]
+  subgraph PRES["Preservation and Digital Assets"]
+    PPR[ahgPreservationPlugin]
+    COND[ahgConditionPlugin]
+    DAM[ahgDAMPlugin]
   end
 
-  FW --> C1
-  FW --> C2
-  FW --> C3
-  FW --> C4
-  FW --> C5
-  FW --> C6
-  FW --> C7
+  subgraph AI["AI Search Research Reporting"]
+    NER[ahgNerPlugin]
+    META[ahgMetadataExtractionPlugin]
+    SEM[ahgSemanticSearchPlugin]
+    RSR[ahgResearchPlugin]
+    RIC[ahgRicExplorerPlugin]
+    REP[ahgReportBuilderPlugin]
+  end
+
+  subgraph ENG["User Engagement"]
+    FAV[ahgFavoritesPlugin]
+    FDB[ahgFeedbackPlugin]
+    CART[ahgCartPlugin]
+  end
+
+  subgraph OPS["Operations Integration Migration"]
+    API[ahgAPIPlugin]
+    BAK[ahgBackupPlugin]
+    DMIG[ahgDataMigrationPlugin]
+    MIG[ahgMigrationPlugin]
+    VEND[ahgVendorPlugin]
+  end
+
+  FW --> UI
+  FW --> SEC
+  FW --> GOV2
+  FW --> SECTOR
+  FW --> PRES
+  FW --> AI
+  FW --> ENG
+  FW --> OPS
+
+  CAT --> FW
+  JS --> UI
+  PY --> OPS
 
 ```
 
@@ -180,80 +197,67 @@ Plugin map by capability
 This map describes where each plugin fits, grouped by capability. It is intended to guide deployment planning and contribution boundaries.
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart":{"nodeSpacing":60,"rankSpacing":70}}}%%
+flowchart TB
 
-  subgraph FW["atom-framework stable base"]
-    F1[DB bootstrap]
-    F2[Extension lifecycle]
-    F3[Migrations runner]
-    F4[Compatibility and shims]
-    F5[Contracts and utilities]
+  subgraph L1["Lane 1 Clients"]
+    USERS[Users]
+    BROWSER[Browser UI]
+    AUTO[Automation and Tools]
   end
 
-  subgraph C1["Security privacy rights access"]
-    Psc[ahgSecurityClearancePlugin]
-    Ppr[ahgPrivacyPlugin]
-    Prt[ahgRightsPlugin]
-    Per[ahgExtendedRightsPlugin]
-    Par[ahgAccessRequestPlugin]
-    Prp[ahgRequestToPublishPlugin]
+  subgraph L2["Lane 2 SDKs"]
+    JS[atom-client-js]
+    PY[atom-ahg-python]
   end
 
-  subgraph C2["Provenance audit governance"]
-    Ppv[ahgProvenancePlugin]
-    Pat[ahgAuditTrailPlugin]
-    Pda[ahgDonorAgreementPlugin]
+  subgraph L3["Lane 3 AtoM runtime"]
+    PLUGINS[AHG plugins]
+    ATOM[AtoM 2.10.x runtime]
   end
 
-  subgraph C3["Spectrum loans museum sector"]
-    Psp[ahgSpectrumPlugin]
-    Plo[ahgLoanPlugin]
-    Pmu[ahgMuseumPlugin]
-    Pha[ahgHeritageAccountingPlugin]
+  subgraph L4["Lane 4 Framework base"]
+    FW[atom-framework]
+    EXT[Extension lifecycle]
+    MIG[Migrations runner]
+    DBB[Database bootstrap]
+    COMP[Compatibility shims]
+    CTR[Contracts]
+    UTIL[Shared utilities]
   end
 
-  subgraph C4["Preservation condition DAM media display"]
-    Pps[ahgPreservationPlugin]
-    Pco[ahgConditionPlugin]
-    Pdm[ahgDAMPlugin]
-    Pdp[ahgDisplayPlugin]
-    Pga[ahgGalleryPlugin]
-    Pii[ahgIiifCollectionPlugin]
-    P3d[ahg3DModelPlugin]
-    Pth[ahgThemeB5Plugin]
+  subgraph L5["Lane 5 Data stores"]
+    MYSQL[(MySQL)]
+    ES[(Elasticsearch)]
+    FS[(Storage)]
   end
 
-  subgraph C5["AI extraction search research reporting"]
-    Pnr[ahgNerPlugin]
-    Pmx[ahgMetadataExtractionPlugin]
-    Pss[ahgSemanticSearchPlugin]
-    Prs[ahgResearchPlugin]
-    Pric[ahgRicExplorerPlugin]
-    Prb[ahgReportBuilderPlugin]
+  subgraph L6["Lane 6 Catalog and governance"]
+    CAT[atom-extensions-catalog]
   end
 
-  subgraph C6["User engagement"]
-    Pfv[ahgFavoritesPlugin]
-    Pfb[ahgFeedbackPlugin]
-    Pct[ahgCartPlugin]
-  end
+  USERS --> BROWSER --> PLUGINS --> ATOM
+  AUTO --> PY
+  BROWSER --> JS
 
-  subgraph C7["Integration migration operations"]
-    Pap[ahgAPIPlugin]
-    Plb[ahgLibraryPlugin]
-    Pmg[ahgMigrationPlugin]
-    Pdmig[ahgDataMigrationPlugin]
-    Pbk[ahgBackupPlugin]
-    Pvd[ahgVendorPlugin]
-  end
+  PLUGINS --> FW
+  FW --> EXT
+  FW --> MIG
+  FW --> DBB
+  FW --> COMP
+  FW --> CTR
+  FW --> UTIL
 
-  FW --> C1
-  FW --> C2
-  FW --> C3
-  FW --> C4
-  FW --> C5
-  FW --> C6
-  FW --> C7
+  ATOM --> MYSQL
+  ATOM --> ES
+  PLUGINS --> FS
+  UTIL --> FS
+  DBB --> MYSQL
+
+  CAT --> EXT
+  JS --> PLUGINS
+  PY --> FW
+
   ```
 
 Functional summary by plugin
