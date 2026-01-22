@@ -35,7 +35,9 @@ Our engineering model is intentionally modular:
 
 ### Full stack diagram
 
-```%%{init: {"flowchart":{"nodeSpacing":50,"rankSpacing":60}}}%%
+```mermaid
+
+%%{init: {"flowchart":{"nodeSpacing":50,"rankSpacing":60}}}%%
 flowchart TB
 
   FW[atom-framework stable base]
