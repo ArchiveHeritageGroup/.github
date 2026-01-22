@@ -94,6 +94,8 @@ flowchart TB
   CAT --> EXT
   JS --> PL
   PY --> FW
+```
+
 Repository map
 atom-extensions-catalog
 Canonical documentation and recommended deployment patterns
@@ -240,6 +242,7 @@ flowchart LR
   FW --> C5
   FW --> C6
   FW --> C7
+  ```  
 Functional summary by plugin
 Security, privacy, rights, access
 ahgSecurityClearancePlugin
