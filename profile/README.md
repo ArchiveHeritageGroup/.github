@@ -166,7 +166,7 @@ Search: Elasticsearch as required by AtoM deployment
 Plugin map by capability
 This map describes where each plugin fits, grouped by capability. It is intended to guide deployment planning and contribution boundaries.
 
-mermaid
+```mermaid
 flowchart LR
 
   subgraph FW["atom-framework stable base"]
@@ -241,7 +241,8 @@ flowchart LR
   FW --> C5
   FW --> C6
   FW --> C7
-  ```  
+  ```
+
 Functional summary by plugin
 Security, privacy, rights, access
 ahgSecurityClearancePlugin
