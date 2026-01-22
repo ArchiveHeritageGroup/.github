@@ -35,65 +35,76 @@ Our engineering model is intentionally modular:
 
 ### Full stack diagram
 
-```mermaid
+```%%{init: {"flowchart":{"nodeSpacing":50,"rankSpacing":60}}}%%
 flowchart TB
 
-  %% Clients
-  subgraph Clients
-    U[Archivists and Researchers]
-    B[Browser user interface]
-    A[Automation and Integrations]
+  FW[atom-framework stable base]
+
+  subgraph C1["Security privacy rights access"]
+    P1[ahgSecurityClearancePlugin]
+    P2[ahgPrivacyPlugin]
+    P3[ahgRightsPlugin]
+    P4[ahgExtendedRightsPlugin]
+    P5[ahgAccessRequestPlugin]
+    P6[ahgRequestToPublishPlugin]
   end
 
-  %% AtoM
-  subgraph AtoM["AtoM 2.10.x"]
-    Q[Qubit domain and Symfony runtime]
-    PL[AHG plugins for AtoM]
+  subgraph C2["Provenance audit governance"]
+    P7[ahgProvenancePlugin]
+    P8[ahgAuditTrailPlugin]
+    P9[ahgDonorAgreementPlugin]
   end
 
-  %% Framework base
-  subgraph FW["AHG framework atom-framework"]
-    DBB[Database bootstrap and connection ownership]
-    MIG[Migrations runner]
-    EXT[Extension lifecycle manager]
-    COMP[Compatibility layer and shims]
-    CTR[Contracts and interfaces]
-    UTIL[Shared utilities]
+  subgraph C3["Spectrum loans museum sector"]
+    P10[ahgSpectrumPlugin]
+    P11[ahgLoanPlugin]
+    P12[ahgMuseumPlugin]
+    P13[ahgHeritageAccountingPlugin]
   end
 
-  %% SDKs
-  subgraph SDK["Shared SDKs"]
-    JS[atom-client-js TypeScript client and widgets]
-    PY[atom-ahg-python Python client SDK]
+  subgraph C4["Preservation condition DAM display"]
+    P14[ahgPreservationPlugin]
+    P15[ahgConditionPlugin]
+    P16[ahgDAMPlugin]
+    P17[ahgDisplayPlugin]
+    P18[ahgGalleryPlugin]
+    P19[ahgIiifCollectionPlugin]
+    P20[ahg3DModelPlugin]
+    P21[ahgThemeB5Plugin]
   end
 
-  %% Catalog and governance
-  subgraph GOV["Catalog and governance"]
-    CAT[atom-extensions-catalog manifest and documentation]
+  subgraph C5["AI extraction search research reporting"]
+    P22[ahgNerPlugin]
+    P23[ahgMetadataExtractionPlugin]
+    P24[ahgSemanticSearchPlugin]
+    P25[ahgResearchPlugin]
+    P26[ahgRicExplorerPlugin]
+    P27[ahgReportBuilderPlugin]
   end
 
-  %% Data stores
-  subgraph Data["Data stores and services"]
-    MYSQL[(MySQL 8)]
-    ES[(Elasticsearch)]
-    FS[(Filesystem or storage)]
+  subgraph C6["User engagement"]
+    P28[ahgFavoritesPlugin]
+    P29[ahgFeedbackPlugin]
+    P30[ahgCartPlugin]
   end
 
-  %% Flows
-  U --> B --> PL --> Q
-  A --> PY
-  B --> JS
+  subgraph C7["Integration migration operations"]
+    P31[ahgAPIPlugin]
+    P32[ahgLibraryPlugin]
+    P33[ahgMigrationPlugin]
+    P34[ahgDataMigrationPlugin]
+    P35[ahgBackupPlugin]
+    P36[ahgVendorPlugin]
+  end
 
-  PL --> FW
-  FW --> MYSQL
-  Q --> MYSQL
-  Q --> ES
-  PL --> FS
-  FW --> FS
+  FW --> C1
+  FW --> C2
+  FW --> C3
+  FW --> C4
+  FW --> C5
+  FW --> C6
+  FW --> C7
 
-  CAT --> EXT
-  JS --> PL
-  PY --> FW
 ```
 
 Repository map
