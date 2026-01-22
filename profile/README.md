@@ -1,288 +1,377 @@
 # Archive & Heritage Group (AHG)
 
-Archive & Heritage Group (AHG) builds production-grade extensions, integration tooling, and automation around **Access to Memory (AtoM)** to support real archival, records management, and GLAM workflows.
+Archive & Heritage Group (AHG) builds production-grade extensions, integration tooling, and automation around **Access to Memory (AtoM)** to support archival, records management, and GLAM workflows.
 
 Our engineering model is intentionally modular:
 
-- **atom-framework** is the stable base (changes rarely).
+- **atom-framework** is the stable base and changes rarely.
 - **Plugins** deliver almost all functional capability.
 - **Shared SDKs** prevent duplicated client logic across UI modules and automation tooling.
-- **atom-extensions-catalog** is the canonical “Start Here” entry point (docs + catalog/manifest).
+- **atom-extensions-catalog** is the canonical entry point for documentation and installation patterns.
 
 ---
 
 ## Start here
 
-1. **ArchiveHeritageGroup/atom-extensions-catalog**  
-   Documentation, catalog/manifest, install/upgrade patterns, compatibility guidance.
+1. **atom-extensions-catalog**  
+   Documentation, catalog and manifest, install and upgrade patterns, compatibility guidance.
 
-2. **ArchiveHeritageGroup/atom-framework**  
-   Stable base: extension lifecycle, migrations runner, DB bootstrap, compatibility/shims, contracts/utilities.
+2. **atom-framework**  
+   Stable base platform: extension lifecycle, migrations runner, DB bootstrap, Qubit compatibility shims, contracts and utilities.
 
-3. **ArchiveHeritageGroup/atom-ahg-plugins**  
-   AHG-maintained plugins: rights/privacy, provenance, Spectrum/loans, preservation/condition, IIIF/3D, research/search, engagement modules.
+3. **atom-ahg-plugins**  
+   AHG-maintained plugins: rights, privacy, provenance, Spectrum and loans, preservation and condition, IIIF and 3D, research and search, engagement modules.
 
 ---
 
-## Architecture
+## Architecture overview
 
-> Principle: the framework provides infrastructure and contracts; plugins implement features.
+### Core principles
+
+- The **framework** provides infrastructure and contracts.
+- **Plugins** implement domain features, workflows, and UI.
+- **SDKs** provide shared API clients and UI building blocks.
+- The **catalog** documents what is supported and how to deploy it.
+
+### Full stack diagram
 
 ```mermaid
 flowchart TB
+
   %% Clients
   subgraph Clients
-    U[Archivists / Researchers / Administrators]
-    B[Browser UI]
-    A[Automation / Integrations]
+    U[Archivists and Researchers]
+    B[Browser user interface]
+    A[Automation and Integrations]
   end
 
-  %% AtoM core
-  subgraph AtoM["AtoM 2.10.x (Symfony/Qubit)"]
-    Q[Qubit domain + Symfony runtime]
-    P[AHG Plugins (Symfony plugins)]
+  %% AtoM
+  subgraph AtoM["AtoM 2.10.x"]
+    Q[Qubit domain and Symfony runtime]
+    PL[AHG plugins for AtoM]
   end
 
   %% Framework base
-  subgraph FW["AHG Framework (atom-framework) — stable base"]
-    DBB[DB bootstrap / connection ownership]
-    MIG[Migrations runner (generic)]
-    EXT[Extension lifecycle manager<br/>(install/enable/disable/deps/core/locked)]
-    COMP[Compatibility & shims<br/>(Qubit/Symfony integration points)]
-    CTR[Contracts / Interfaces]
-    UTIL[Shared utilities<br/>(FS/HTTP/logging/helpers)]
+  subgraph FW["AHG framework atom-framework"]
+    DBB[Database bootstrap and connection ownership]
+    MIG[Migrations runner]
+    EXT[Extension lifecycle manager]
+    COMP[Compatibility layer and shims]
+    CTR[Contracts and interfaces]
+    UTIL[Shared utilities]
   end
 
   %% SDKs
   subgraph SDK["Shared SDKs"]
-    JS[atom-client-js<br/>(TypeScript client + reusable UI widgets)]
-    PY[atom-ahg-python<br/>(Python client SDK for automation/tools)]
+    JS[atom-client-js TypeScript client and widgets]
+    PY[atom-ahg-python Python client SDK]
   end
 
-  %% Data stores / services
-  subgraph Data["Data stores & services"]
+  %% Catalog and governance
+  subgraph GOV["Catalog and governance"]
+    CAT[atom-extensions-catalog manifest and documentation]
+  end
+
+  %% Data stores
+  subgraph Data["Data stores and services"]
     MYSQL[(MySQL 8)]
     ES[(Elasticsearch)]
-    FS[(Filesystem / storage)]
-  end
-
-  %% Governance
-  subgraph GOV["Catalog / Governance"]
-    CAT[atom-extensions-catalog<br/>(manifest + docs + install guidance)]
+    FS[(Filesystem or storage)]
   end
 
   %% Flows
-  U --> B --> P --> Q
+  U --> B --> PL --> Q
   A --> PY
   B --> JS
 
-  P --> FW
+  PL --> FW
   FW --> MYSQL
   Q --> MYSQL
   Q --> ES
-  P --> FS
+  PL --> FS
   FW --> FS
 
   CAT --> EXT
-  JS --> P
+  JS --> PL
   PY --> FW
-
-
 Repository map
+atom-extensions-catalog
+Canonical documentation and recommended deployment patterns
 
-ArchiveHeritageGroup/atom-framework
-Stable base platform: DB bootstrap, extension lifecycle, migrations runner, compatibility/shims, contracts/utilities.
+Catalog and manifest approach for consistent installs and upgrades
 
-ArchiveHeritageGroup/atom-ahg-plugins
-AHG plugin bundle (feature modules). Vendors should not contribute here unless explicitly invited.
+Governance entry point for community contributions (plugin registration)
 
-ArchiveHeritageGroup/atom-extensions-catalog
-Catalog/manifest + documentation + recommended install/upgrade patterns.
+atom-framework
+Stable base platform intended to change rarely:
 
-ArchiveHeritageGroup/atom-client-js
-Shared JS/TS client: common API client + reusable UI components/widgets.
+DB bootstrap and connection ownership
 
-ArchiveHeritageGroup/atom-ahg-python
-Shared Python client: automation/integration tooling client for AHG/AtoM services/APIs.
+Extension lifecycle management (install, enable, disable, dependencies, core and locked)
+
+Generic migrations runner
+
+Qubit compatibility layer and shims
+
+Shared contracts and utilities
+
+atom-ahg-plugins
+AHG-maintained plugins providing feature modules:
+
+Rights, privacy, and security clearance
+
+Provenance, audit trail, and governance workflows
+
+Spectrum procedures and loan workflows
+
+Preservation, condition, DAM, and display
+
+IIIF and 3D support
+
+AI enrichment, semantic search, research tooling
+
+User engagement modules
+
+atom-client-js
+Shared TypeScript library:
+
+API client patterns for your UI modules
+
+Reusable UI widgets and components
+
+Consistent handling of authentication, pagination, retries, and error reporting
+
+atom-ahg-python
+Shared Python library:
+
+API client patterns for automation and integration tooling
+
+Consistent auth, pagination, batching, retries
+
+Useful for ETL, migration tooling, processing pipelines, and scheduled jobs
 
 Compatibility targets
-
-AtoM: 2.10.x (primary)
+AtoM: 2.10.x
 
 PHP: 8.3
 
 Database: MySQL 8.x
 
-Web server: Nginx (PHP-FPM)
+Web server: Nginx with PHP-FPM
 
-Search: Elasticsearch (per AtoM deployment requirements)
+Search: Elasticsearch as required by AtoM deployment
 
-Plugin catalog (AHG)
+Plugin map by capability
+This map describes where each plugin fits, grouped by capability. It is intended to guide deployment planning and contribution boundaries.
 
-Notes:
+mermaid
+Copy code
+flowchart LR
 
-The list below reflects functional intent implied by plugin naming and module structure.
+  subgraph FW["atom-framework stable base"]
+    F1[DB bootstrap]
+    F2[Extension lifecycle]
+    F3[Migrations runner]
+    F4[Compatibility and shims]
+    F5[Contracts and utilities]
+  end
 
-The framework should not contain feature modules long-term; features belong in plugins.
+  subgraph C1["Security privacy rights access"]
+    Psc[ahgSecurityClearancePlugin]
+    Ppr[ahgPrivacyPlugin]
+    Prt[ahgRightsPlugin]
+    Per[ahgExtendedRightsPlugin]
+    Par[ahgAccessRequestPlugin]
+    Prp[ahgRequestToPublishPlugin]
+  end
 
-Security, privacy, rights, access control
+  subgraph C2["Provenance audit governance"]
+    Ppv[ahgProvenancePlugin]
+    Pat[ahgAuditTrailPlugin]
+    Pda[ahgDonorAgreementPlugin]
+  end
 
+  subgraph C3["Spectrum loans museum sector"]
+    Psp[ahgSpectrumPlugin]
+    Plo[ahgLoanPlugin]
+    Pmu[ahgMuseumPlugin]
+    Pha[ahgHeritageAccountingPlugin]
+  end
+
+  subgraph C4["Preservation condition DAM media display"]
+    Pps[ahgPreservationPlugin]
+    Pco[ahgConditionPlugin]
+    Pdm[ahgDAMPlugin]
+    Pdp[ahgDisplayPlugin]
+    Pga[ahgGalleryPlugin]
+    Pii[ahgIiifCollectionPlugin]
+    P3d[ahg3DModelPlugin]
+    Pth[ahgThemeB5Plugin]
+  end
+
+  subgraph C5["AI extraction search research reporting"]
+    Pnr[ahgNerPlugin]
+    Pmx[ahgMetadataExtractionPlugin]
+    Pss[ahgSemanticSearchPlugin]
+    Prs[ahgResearchPlugin]
+    Pric[ahgRicExplorerPlugin]
+    Prb[ahgReportBuilderPlugin]
+  end
+
+  subgraph C6["User engagement"]
+    Pfv[ahgFavoritesPlugin]
+    Pfb[ahgFeedbackPlugin]
+    Pct[ahgCartPlugin]
+  end
+
+  subgraph C7["Integration migration operations"]
+    Pap[ahgAPIPlugin]
+    Plb[ahgLibraryPlugin]
+    Pmg[ahgMigrationPlugin]
+    Pdmig[ahgDataMigrationPlugin]
+    Pbk[ahgBackupPlugin]
+    Pvd[ahgVendorPlugin]
+  end
+
+  FW --> C1
+  FW --> C2
+  FW --> C3
+  FW --> C4
+  FW --> C5
+  FW --> C6
+  FW --> C7
+Functional summary by plugin
+Security, privacy, rights, access
 ahgSecurityClearancePlugin
-Security classifications/clearance rules; embargo/restrictions; audit/security review utilities.
+Security classification and clearance controls; restricted access enforcement; compliance-oriented auditing surfaces.
 
 ahgPrivacyPlugin
-Privacy controls and policy-driven visibility; privacy workflows (e.g., sensitive field handling, redaction coordination).
+Privacy policy enforcement and sensitive data handling patterns; supports governance-aligned workflows.
 
 ahgRightsPlugin
-Rights statements, usage/reuse constraints, rights metadata capture and display.
+Rights statements and usage controls; rights metadata capture and display.
 
 ahgExtendedRightsPlugin
-Extended rights models and workflows beyond baseline rights statements (integrates with clearance/privacy patterns).
+Extended rights models and workflows beyond baseline rights statements; integrates with security and privacy controls.
 
 ahgAccessRequestPlugin
-Access request workflow: request/approve/track access to restricted descriptions/digital objects.
+Access request workflow: request, review, approval, and tracking.
 
 ahgRequestToPublishPlugin
-Publication request workflow: review/approval pipeline for controlled publishing.
+Publication request workflow: controlled release with review and approval.
 
-Provenance, auditability, archival governance
-
+Provenance, auditability, governance
 ahgProvenancePlugin
-Provenance capture and management separated from donor; provenance-linked reporting and export behaviour.
+Provenance capture and management separate from donor; provenance-linked reporting and export behaviour.
 
 ahgAuditTrailPlugin
-Audit trail capture for operational/compliance evidence; traceability of key actions.
+Audit trail capture for accountability and compliance evidence.
 
 ahgDonorAgreementPlugin
-Donor agreement workflows/records and associated metadata.
+Donor agreement records and supporting workflow patterns.
 
-Spectrum, loans, museum and sector workflows
-
+Spectrum, loans, museum sector
 ahgSpectrumPlugin
-Spectrum-aligned procedures and workflows (movement/collection procedures, sector data, process tracking).
+Spectrum-aligned procedures and workflow data capture; sector-specific process tracking.
 
 ahgLoanPlugin
-Loan workflow management aligned to Spectrum (requests, approvals, movements, condition checks, tracking).
+Loan workflow management aligned with Spectrum; request, approval, movement, and tracking patterns.
 
 ahgMuseumPlugin
-Museum-specific descriptive patterns and operational modules (objects/exhibitions/sector metadata).
+Museum-sector metadata and operational modules.
 
 ahgHeritageAccountingPlugin
-Heritage asset accounting and valuation tracking support (reporting-aligned metadata and governance).
+Heritage asset accounting and valuation support; reporting-aligned metadata capture.
 
 Preservation, condition, DAM, media, display
-
 ahgPreservationPlugin
-Preservation-oriented workflows and preservation metadata capture; operational preservation tooling.
+Preservation workflows and preservation metadata capture; operational preservation tooling patterns.
 
 ahgConditionPlugin
-Condition assessment workflows (including photo evidence/annotation workflows where applicable).
+Condition assessment workflows; structured capture of condition evidence and related documentation.
 
 ahgDAMPlugin
-Digital Asset Management workflows: ingest coordination, asset handling patterns, derivative workflow integration.
+Digital asset management workflows; asset handling patterns and derivative workflow integration.
 
 ahgDisplayPlugin
-Display/UX enhancements and presentation features across AtoM UI (viewer/UX improvements).
+UI and display enhancements across AtoM; presentation-oriented widgets and improvements.
 
 ahgGalleryPlugin
-Gallery-style browsing/presentation features and curated display components.
+Gallery-style browsing and curated presentation features.
 
 ahgIiifCollectionPlugin
-IIIF collection/manifest management workflows (collection-centric publishing patterns).
+IIIF collection and manifest management patterns.
 
 ahg3DModelPlugin
-3D model attachment and display integration patterns (viewer support and associated metadata).
+3D model attachment and display integration patterns.
 
-AI, extraction, search, research
+ahgThemeB5Plugin
+Bootstrap 5 theme and UI integration for a modernised front-end experience.
 
+AI, extraction, search, research, reporting
 ahgNerPlugin
-Entity extraction workflow integration (people/places/organisations/dates) to enrich metadata and support redaction/lookup.
+Entity extraction integration to enrich descriptions and support downstream workflows such as redaction and discovery.
 
 ahgMetadataExtractionPlugin
-File/object metadata extraction and enrichment into AtoM fields (cross-plugin utility capability).
+Metadata extraction from files and digital objects; enrichment into AtoM fields.
 
 ahgSemanticSearchPlugin
-Semantic search / embeddings-driven discovery patterns (where deployed and enabled).
+Embeddings-driven semantic search patterns where deployed and enabled.
 
 ahgResearchPlugin
-Researcher-oriented workflows and features (research UX and workflow enhancements).
+Researcher-focused UX and workflow enhancements.
 
 ahgRicExplorerPlugin
-RIC exploration and relationship navigation utilities (contextual exploration patterns).
+Context and relationship exploration utilities and navigation patterns.
 
 ahgReportBuilderPlugin
-Report builder framework: report definition, scheduling/export patterns, dashboard/report presentation utilities.
+Report design and export patterns; report definitions, dashboards, scheduling, and archive management.
 
-User engagement / productivity
-
+User engagement
 ahgFavoritesPlugin
-User favourites/bookmarks and personal organisation features.
+User favourites and bookmarking.
 
 ahgFeedbackPlugin
-Feedback capture/moderation workflows (user interaction and quality improvement loop).
+Feedback capture and moderation workflow.
 
 ahgCartPlugin
-Cart/selection workflow for researchers/requests; optional integration point for e-commerce-like flows.
+Cart and selection workflow for researchers; optional integration point for request and fulfilment patterns.
 
 Integration, migration, operations
-
 ahgAPIPlugin
-Integration-oriented API surfaces/utilities (where applicable to your platform integration model).
+Integration-oriented API surfaces and helper endpoints as required by the ecosystem.
 
 ahgLibraryPlugin
-Library-oriented collection patterns (catalogue-like workflows where required).
+Library-oriented collection patterns for book and catalogue-like workflows where required.
 
 ahgMigrationPlugin
-Migration scaffolding/utilities; controlled evolution patterns.
+Migration scaffolding and controlled evolution utilities.
 
 ahgDataMigrationPlugin
 Data migration workflows and transformation orchestration.
 
 ahgBackupPlugin
-Operational backup tooling and related admin workflows.
+Operational backup and maintenance tooling.
 
 ahgVendorPlugin
-Vendor/party management utilities and shared dependency patterns.
+Vendor and party management utilities used across modules.
 
-Contribution model (critical)
-What vendors should contribute
+Contribution model
+What to contribute
+New features should be delivered as plugins.
 
-Vendors should build plugins and submit them via the catalog process.
+The framework is treated as stable base infrastructure and changes are conservative.
 
-Vendors should not modify the framework base unless explicitly requested and governed.
+Naming conventions
+Prefix ahg is reserved for AHG-maintained plugins.
 
-Naming conventions (enforced)
+Third parties must use a vendor prefix: <vendorPrefix><Feature>Plugin.
 
-Reserved prefix: ahg is reserved for AHG-maintained plugins.
+machine_name must match folder name and configuration class prefix.
 
-Third parties must use a unique vendor prefix: <vendorPrefix><Feature>Plugin.
-
-machine_name == folder name == PluginConfiguration class prefix.
-
-extension.json is required and authoritative for:
-
-machine_name
-
-version
-
-requires (min framework/AtoM/PHP)
-
-dependencies
-
-category
+extension.json is required and authoritative for version and dependencies.
 
 Security
+For security issues, use GitHub Security Advisories where enabled.
 
-For security issues: prefer GitHub Security Advisories (where enabled).
-
-For operational issues: open an issue in the relevant repository with environment details and reproduction steps.
-
-Support
-
-This ecosystem is designed for controlled deployments and repeatable upgrades:
-
-Use the catalog/manifest to manage plugin versions.
-
-Keep the framework stable; implement functionality in plugins.
-
-Use shared SDKs to avoid duplicated client logic in UI modules and automation tooling.
+For operational issues, open an issue in the relevant repository with environment details and reproduction steps.
