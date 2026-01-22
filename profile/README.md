@@ -10,6 +10,56 @@ Our engineering model: a stable base **framework** that changes rarely, with fun
 3. **atom-ahg-plugins** — AHG plugins (rights/privacy, provenance, Spectrum/loans, preservation/condition, IIIF/3D, search/research, user engagement)
 
 ## Architecture
+## Architecture
+
+```mermaid
+flowchart TB
+  subgraph Clients
+    U[Archivists / Researchers]
+    B[Browser UI]
+  end
+
+  subgraph AtoM["AtoM 2.10.x (Symfony/Qubit)"]
+    Q[Qubit Domain Model + Symfony 1.x]
+    P[AHG Plugins (Symfony plugins)]
+  end
+
+  subgraph FW["AHG Framework (atom-framework) — stable base"]
+    DBB[DB bootstrap / connection ownership]
+    MIG[Migrations runner]
+    EXT[Extension lifecycle manager<br/>(install/enable/disable/deps)]
+    COMP[Qubit compatibility/shims]
+    CTR[Contracts/Interfaces]
+    UTIL[Shared utilities]
+  end
+
+  subgraph SDK["Shared SDKs"]
+    JS[atom-client-js<br/>(TS API client + UI widgets)]
+    PY[atom-ahg-python<br/>(Python API client)]
+  end
+
+  subgraph Data["Data Stores / Services"]
+    MYSQL[(MySQL 8)]
+    ES[(Elasticsearch)]
+    FS[(Filesystem / Object storage)]
+  end
+
+  U --> B --> P --> Q
+  P --> FW
+  FW --> MYSQL
+  Q --> MYSQL
+  Q --> ES
+  P --> FS
+  FW --> FS
+
+  JS --> P
+  PY --> FW
+
+  subgraph GOV["Catalog / Governance"]
+    CAT[atom-extensions-catalog<br/>(manifest + docs)]
+  end
+  CAT --> EXT
+
 
 - **Framework (stable)**: DB bootstrap + Qubit replacements/shims + extension lifecycle + migrations runner + contracts
 - **Plugins (feature surface)**: UI + workflows + domain rules + optional services
