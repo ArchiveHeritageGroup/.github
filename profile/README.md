@@ -167,7 +167,6 @@ Plugin map by capability
 This map describes where each plugin fits, grouped by capability. It is intended to guide deployment planning and contribution boundaries.
 
 mermaid
-Copy code
 flowchart LR
 
   subgraph FW["atom-framework stable base"]
