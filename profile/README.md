@@ -1,29 +1,21 @@
 # Archive & Heritage Group (AHG)
 
-Archive & Heritage Group (AHG) builds production-grade extensions, integration tooling, and automation around **Access to Memory (AtoM)** to support real archival, records management, and GLAM workflows.
+We build production-grade extensions, integration tooling, and automation around **Access to Memory (AtoM)** for archival and GLAM workflows.  
+Our engineering model: a stable base **framework** that changes rarely, with functionality delivered via modular **plugins** and shared **SDKs**.
 
-Our engineering focus is a stable base platform that changes rarely, with functionality delivered through modular plugins and supporting SDKs.
+## Start here
 
-## What we build for AtoM
+1. **atom-extensions-catalog** — documentation, catalog/manifest, install/upgrade guidance  
+2. **atom-framework** — stable base platform (extension lifecycle, migrations, DB bootstrap, Qubit/Symfony compatibility)  
+3. **atom-ahg-plugins** — AHG plugins (rights/privacy, provenance, Spectrum/loans, preservation/condition, IIIF/3D, search/research, user engagement)
 
-- **atom-framework**: the stable platform layer (database integration, Qubit/Symfony compatibility shims, extension lifecycle management, migrations runner, shared contracts/utilities).
-- **atom-ahg-plugins**: AHG-maintained plugins providing functional modules (rights/privacy, provenance, Spectrum workflows, preservation/condition, IIIF/3D, researcher tooling, audit trail, and more).
-- **atom-extensions-catalog**: curated catalog and documentation to install, enable, and maintain extensions consistently across environments.
+## Architecture
 
-## SDKs and client libraries
-
-We maintain shared client libraries to reduce duplication across plugins and tools:
-
-- **atom-ahg-python**: Python SDK for interacting with AHG/AtoM services and APIs (automation, processing pipelines, integrations).
-- **atom-client-js**: TypeScript/JavaScript SDK for reusable UI widgets and a consistent API client layer.
-
-## Repository map
-
-Start here, in this order:
-
-1. **atom-extensions-catalog** — installation guidance, curated list of extensions, and recommended deployment patterns.
-2. **atom-framework** — the base platform (intended to remain stable).
-3. **atom-ahg-plugins** — functional plugins and modules built on the platform.
+- **Framework (stable)**: DB bootstrap + Qubit replacements/shims + extension lifecycle + migrations runner + contracts
+- **Plugins (feature surface)**: UI + workflows + domain rules + optional services
+- **SDKs (shared clients)**:
+  - **atom-client-js**: TypeScript client + reusable UI components/widgets
+  - **atom-ahg-python**: Python client SDK for automation/processing pipelines and integrations
 
 ## Compatibility targets
 
@@ -34,23 +26,20 @@ Start here, in this order:
 
 ## Contribution model
 
-We welcome community participation and third-party plugin development.
-
-- **Framework**: treated as a stable base; changes are conservative and reviewed by AHG maintainers.
-- **Plugins**: the primary contribution surface; new features should be delivered as plugins.
+- **Framework**: conservative changes, reviewed by AHG maintainers (platform stability)
+- **Plugins**: primary contribution surface; new features ship as plugins
 - **Naming**:
-  - `ahg<Feature>Plugin` is reserved for AHG-maintained plugins.
-  - Third-party plugins should use a vendor prefix: `<vendorPrefix><Feature>Plugin`.
-
-To propose a new plugin for the ecosystem, contribute it in your own repository and submit it for inclusion via the catalog process.
+  - `ahg<Feature>Plugin` reserved for AHG-maintained plugins
+  - Third parties use `<vendorPrefix><Feature>Plugin`
 
 ## Security
 
-If you believe you have found a security issue, please use GitHub Security Advisories where available. For operational issues, open an issue in the relevant repository with clear reproduction steps and environment details.
+Use GitHub Security Advisories where available. For operational issues, open an issue in the relevant repository with environment details and reproduction steps.
 
-## Links
+## Repository map
 
-- Organisation: https://github.com/ArchiveHeritageGroup
-- Framework: https://github.com/ArchiveHeritageGroup/atom-framework
-- Plugins: https://github.com/ArchiveHeritageGroup/atom-ahg-plugins
-- Catalog: https://github.com/ArchiveHeritageGroup/atom-extensions-catalog
+- atom-extensions-catalog — catalog + documentation + governance
+- atom-framework — stable base
+- atom-ahg-plugins — plugins bundle (AHG)
+- atom-client-js — TS SDK
+- atom-ahg-python — Python SDK
