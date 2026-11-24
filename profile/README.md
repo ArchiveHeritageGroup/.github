@@ -1,243 +1,38 @@
-# Archive & Heritage Group (AHG)
+# The Archive and Heritage Digital Commons Group (AHG)
 
-Archive & Heritage Group (AHG) builds production-grade extensions, integration tooling, and automation around **Access to Memory (AtoM)** to support archival, records management, and GLAM workflows.
+AHG builds open-source software for archives, museums, libraries and records managers. There are three lines of work, and they are kept deliberately separate: **Heratio**, our own GLAM platform; **AHG Extensions for AtoM**, for institutions that want to stay on Access to Memory; and **OpenRiC**, an open specification for exchanging archival description built on the ICA's Records in Contexts.
 
-Our engineering model is intentionally modular:
+## Heratio
 
-- **atom-framework** is the stable base and changes rarely.
-- **Plugins** deliver almost all functional capability.
-- **Shared SDKs** prevent duplicated client logic across UI modules and automation tooling.
-- **atom-extensions-catalog** is the canonical entry point for documentation and installation patterns.
+[Heratio](https://heratio.org) is a self-hostable GLAM platform on Laravel 12: archival description, museum collections management, digital asset management and records management in one application. It is Records in Contexts native and supports ISAD(G), ISAAR(CPF) and ISDIAH, Spectrum procedures, OAIS/OCFL preservation and IIIF. Country-specific compliance is added through pluggable modules rather than built into the core.
 
----
+Source: [heratio](https://github.com/ArchiveHeritageGroup/heratio) (AGPL-3.0). Releases are published on the repository's [releases page](https://github.com/ArchiveHeritageGroup/heratio/releases).
 
-## Start here
+## AHG Extensions for AtoM
 
-1. **atom-extensions-catalog**
-   Documentation, catalog and manifest, install and upgrade patterns, compatibility guidance.
+For institutions running [Access to Memory](https://www.accesstomemory.org) 2.10, the extensions add preservation, provenance, Records in Contexts, AI-assisted discovery, museum, library and DAM workflows, rights, privacy and governance. It is not a fork: AtoM stays as upstream ships it, and each capability is a plugin an institution can install or leave out. The extensions are a separate product from Heratio.
 
-2. **atom-framework**
-   Stable base platform: extension lifecycle, migrations runner, DB bootstrap, Qubit compatibility shims, contracts and utilities.
+| Repository | What it is |
+| --- | --- |
+| [atom-ahg-plugins](https://github.com/ArchiveHeritageGroup/atom-ahg-plugins) | The plugins and themes, with packaged downloads (AGPL-3.0) |
+| [atom-framework](https://github.com/ArchiveHeritageGroup/atom-framework) | The framework layer the plugins run on: query builder and extension manager for AtoM 2.8-2.10 (AGPL-3.0) |
+| [atom-extensions-catalog](https://github.com/ArchiveHeritageGroup/atom-extensions-catalog) | The catalogue: what each extension does, how to install and upgrade, and compatibility |
 
-3. **atom-ahg-plugins**
-   AHG-maintained plugins: rights, privacy, provenance, Spectrum and loans, preservation and condition, IIIF and 3D, research and search, engagement modules.
+## OpenRiC
 
-4. **[Product Roadmap](https://github.com/ArchiveHeritageGroup/atom-extensions-catalog/blob/main/ROADMAP.md)**
-   What's completed, in progress, planned, and future — with competitive context.
+[OpenRiC](https://openric.org) is an open, implementation-neutral specification for publishing and exchanging archival description built on RiC-CM 1.0 and RiC-O 1.1. It defines a testable HTTP contract (profiles, JSON Schemas, SHACL shapes, fixtures, an OpenAPI contract and a conformance probe) so that records, people, activities, places and their relationships can move between archival systems. Any system can implement it, and it does not depend on any AHG product. The [OpenRiC](https://github.com/ArchiveHeritageGroup/OpenRiC) repository here is a signpost: the specification itself lives in the [openric](https://github.com/openric) organisation.
 
----
+## Tools
 
-## Architecture overview
+| Repository | What it is |
+| --- | --- |
+| [ahg-archives-mcp](https://github.com/ArchiveHeritageGroup/ahg-archives-mcp) | An MCP server that lets an AI assistant search and read archival catalogues (stock AtoM, AtoM with the AHG Extensions, Heratio and OpenRiC) and propose improvements. Nothing changes until an archivist approves it. In development (AGPL-3.0) |
+| [inference-receipts](https://github.com/ArchiveHeritageGroup/inference-receipts) | A tamper-evident chain of receipts for AI inference calls (RFC 8785 JSON canonicalisation and Ed25519 signatures), aligned with EU AI Act Article 12. Pure PHP with no framework dependencies (Apache-2.0) |
 
-### Core principles
+The earlier AtoM API SDKs, [atom-client-js](https://github.com/ArchiveHeritageGroup/atom-client-js) and [atom-ahg-python](https://github.com/ArchiveHeritageGroup/atom-ahg-python), are retired and archived.
 
-- The **framework** provides infrastructure and contracts.
-- **Plugins** implement domain features, workflows, and UI.
-- **SDKs** provide shared API clients and UI building blocks.
-- The **catalog** documents what is supported and how to deploy it.
+## Contact
 
-### Full stack diagram
+Website: [theahg.co.za](https://theahg.co.za). For bugs or questions about a product, open an issue in its repository, with your environment and the steps to reproduce. Report security issues privately through GitHub Security Advisories where a repository has them enabled, not in a public issue.
 
-```mermaid
-
-%%{init: {"flowchart":{"nodeSpacing":55,"rankSpacing":65}}}%%
-flowchart TB
-
-  FW[atom-framework stable base]
-
-  subgraph SDK["Shared SDKs"]
-    JS[atom-client-js]
-    PY[atom-ahg-python]
-  end
-
-  subgraph GOV["Catalog"]
-    CAT[atom-extensions-catalog]
-  end
-
-  subgraph UI["UI and Presentation"]
-    THEME[ahgThemeB5Plugin]
-    DISP[ahgDisplayPlugin]
-    GALL[ahgGalleryPlugin]
-    IIIF[ahgIiifCollectionPlugin]
-    M3D[ahg3DModelPlugin]
-  end
-
-  subgraph SEC["Security Rights Privacy Access"]
-    CLR[ahgSecurityClearancePlugin]
-    RGT[ahgRightsPlugin]
-    XRGT[ahgExtendedRightsPlugin]
-    PRV[ahgPrivacyPlugin]
-    ARQ[ahgAccessRequestPlugin]
-    PUB[ahgRequestToPublishPlugin]
-  end
-
-  subgraph GOV2["Provenance Audit Governance"]
-    PROV[ahgProvenancePlugin]
-    AUD[ahgAuditTrailPlugin]
-    DON[ahgDonorAgreementPlugin]
-  end
-
-  subgraph SECTOR["Sector Workflows"]
-    SPEC[ahgSpectrumPlugin]
-    LOAN[ahgLoanPlugin]
-    MUS[ahgMuseumPlugin]
-    LIB[ahgLibraryPlugin]
-    ACC[ahgHeritageAccountingPlugin]
-  end
-
-  subgraph PRES["Preservation and Digital Assets"]
-    PPR[ahgPreservationPlugin]
-    COND[ahgConditionPlugin]
-    DAM[ahgDAMPlugin]
-  end
-
-  subgraph AI["AI Search Research Reporting"]
-    NER[ahgAIPlugin]
-    DISC[ahgDiscoveryPlugin]
-    META[ahgMetadataExtractionPlugin]
-    SEM[ahgSemanticSearchPlugin]
-    RSR[ahgResearchPlugin]
-    RIC[ahgRicExplorerPlugin]
-    REP[ahgReportBuilderPlugin]
-  end
-
-  subgraph ENG["User Engagement"]
-    FAV[ahgFavoritesPlugin]
-    FDB[ahgFeedbackPlugin]
-    CART[ahgCartPlugin]
-  end
-
-  subgraph OPS["Operations Integration Migration"]
-    API[ahgAPIPlugin]
-    GQL[ahgGraphQLPlugin]
-    BAK[ahgBackupPlugin]
-    DMIG[ahgDataMigrationPlugin]
-    MIG[ahgMigrationPlugin]
-    VEND[ahgVendorPlugin]
-  end
-
-  FW --> UI
-  FW --> SEC
-  FW --> GOV2
-  FW --> SECTOR
-  FW --> PRES
-  FW --> AI
-  FW --> ENG
-  FW --> OPS
-
-  CAT --> FW
-  JS --> UI
-  PY --> OPS
-
-```
-
----
-
-## Repository map
-
-**atom-extensions-catalog** — Canonical documentation and recommended deployment patterns. Catalog and manifest approach for consistent installs and upgrades. Governance entry point for community contributions (plugin registration).
-
-**atom-framework** — Stable base platform intended to change rarely: DB bootstrap and connection ownership, extension lifecycle management (install, enable, disable, dependencies, core and locked), generic migrations runner, Qubit compatibility layer and shims, shared contracts and utilities.
-
-**atom-ahg-plugins** — AHG-maintained plugins providing feature modules: Rights, privacy, and security clearance. Provenance, audit trail, and governance workflows. Spectrum procedures and loan workflows. Preservation, condition, DAM, and display. IIIF and 3D support. AI enrichment, semantic search, research tooling. User engagement modules.
-
-**atom-client-js** — Shared TypeScript library: API client patterns for UI modules, reusable UI widgets and components, consistent handling of authentication, pagination, retries, and error reporting.
-
-**atom-ahg-python** — Shared Python library: API client patterns for automation and integration tooling, consistent auth, pagination, batching, retries. Useful for ETL, migration tooling, processing pipelines, and scheduled jobs.
-
----
-
-## Compatibility targets
-
-- **AtoM:** 2.10.x
-- **PHP:** 8.3
-- **Database:** MySQL 8.x
-- **Web server:** Nginx with PHP-FPM
-- **Search:** Elasticsearch 7.x
-- **Vector store:** Qdrant (optional — for semantic search)
-- **AI backend:** Ollama / spaCy / Argos Translate (optional — for AI features)
-
----
-
-## Plugin map by capability
-
-```mermaid
-%%{init: {"flowchart":{"nodeSpacing":60,"rankSpacing":70}}}%%
-flowchart TB
-
-  subgraph L1["Lane 1 Clients"]
-    USERS[Users]
-    BROWSER[Browser UI]
-    AUTO[Automation and Tools]
-  end
-
-  subgraph L2["Lane 2 SDKs"]
-    JS[atom-client-js]
-    PY[atom-ahg-python]
-  end
-
-  subgraph L3["Lane 3 AtoM runtime"]
-    PLUGINS[AHG plugins]
-    ATOM[AtoM 2.10.x runtime]
-  end
-
-  subgraph L4["Lane 4 Framework base"]
-    FW[atom-framework]
-    EXT[Extension lifecycle]
-    MIG[Migrations runner]
-    DBB[Database bootstrap]
-    COMP[Compatibility shims]
-    CTR[Contracts]
-    UTIL[Shared utilities]
-  end
-
-  subgraph L5["Lane 5 Data stores"]
-    MYSQL[(MySQL)]
-    ES[(Elasticsearch)]
-    QD[(Qdrant)]
-    FS[(Storage)]
-  end
-
-  subgraph L6["Lane 6 Catalog and governance"]
-    CAT[atom-extensions-catalog]
-  end
-
-  USERS --> BROWSER --> PLUGINS --> ATOM
-  AUTO --> PY
-  BROWSER --> JS
-
-  PLUGINS --> FW
-  FW --> EXT
-  FW --> MIG
-  FW --> DBB
-  FW --> COMP
-  FW --> CTR
-  FW --> UTIL
-
-  ATOM --> MYSQL
-  ATOM --> ES
-  PLUGINS --> QD
-  PLUGINS --> FS
-  UTIL --> FS
-  DBB --> MYSQL
-
-  CAT --> EXT
-  JS --> PLUGINS
-  PY --> FW
-
-```
-
----
-
-## Contribution model
-
-**What to contribute** — New features should be delivered as plugins. The framework is treated as stable base infrastructure and changes are conservative.
-
-**Naming conventions** — Prefix `ahg` is reserved for AHG-maintained plugins. Third parties must use a vendor prefix: `<vendorPrefix><Feature>Plugin`. `machine_name` must match folder name and configuration class prefix. `extension.json` is required and authoritative for version and dependencies.
-
-**Security** — For security issues, use GitHub Security Advisories where enabled. For operational issues, open an issue in the relevant repository with environment details and reproduction steps.
-
----
-
-**Contact:** [The Archive and Heritage Group](https://theahg.co.za)
-**License:** GPL-3.0
+Licences differ by repository, so check each repository's own licence file.
